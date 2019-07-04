@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import PropTypes from "prop-types"
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native"
-import RandomNumber from './randomNumber'
+import RandomNumber from './RandomNumber'
 import shuffle from 'lodash.shuffle'
 
 export default class Game extends Component {
@@ -129,17 +129,33 @@ export default class Game extends Component {
     const gameStatus = this.gameStatus
     return (
       <View style={styles.container}>
-        {/* target sum */}
-        <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>
-          {this.target}
+        {/* game instruction */}
+        <Text style={styles.instruction}>
+          Choose correct numbers to have a total of the target number showed in the box
         </Text>
+
+        {/* target sum */}
+        { this.gameStatus === 'PLAYING' && (
+          <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>
+            {this.target}
+          </Text>
+          )
+        }
+
+        {/* show game status message */}
+        { this.gameStatus !== 'PLAYING' && (
+          <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>
+            {this.gameStatus}
+          </Text>
+          )
+        }
         
         {/* timer */}
-        <Text>{this.state.remainingSeconds}</Text>
+        <Text style={styles.timer}>Attention: {this.state.remainingSeconds}</Text>
         
         {/* list of random numbers */}
         <View style={styles.randomContainer}>
-          
+
           {this.shuffledRandomNumbers.map((randomNumber, index) => (
               <RandomNumber 
                 key={index} 
@@ -171,15 +187,22 @@ export default class Game extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#96DDFF",
+    backgroundColor: "#006FC2",
     flex: 1
+  },
+  instruction: {
+    fontSize: 20,
+    textAlign: 'justify',
+    color: '#CCEBFF',
+    marginTop: 10, 
+    padding: 25
   },
   target: {
     fontSize: 40,
     color: "#fff",
     backgroundColor: "#01BFFF",
     padding: 10,
-    marginTop: 50,
+    // marginTop: 0,
     marginLeft: 30,
     marginRight: 30,
     textAlign: "center"
@@ -199,9 +222,15 @@ const styles = StyleSheet.create({
   STATUS_LOST: {
     backgroundColor: "orange",
   },
+  timer: {
+    fontSize: 20,
+    textAlign: 'center',
+    marginTop: 20,
+    color: '#CCEBFF'
+  },
   button: {
       height: 50,
-      backgroundColor: '#01BFFF', 
+      backgroundColor: '#68C2FF', 
       borderRadius: 5,
       justifyContent: 'center',
       alignItems: 'center',

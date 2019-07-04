@@ -5,6 +5,7 @@ import RandomNumber from './randomNumber'
 import shuffle from 'lodash.shuffle'
 
 export default class Game extends Component {
+  // built-in typechecking abilities of React, help to catch bugs easier
   static propTypes = {
     randomNumberCount: PropTypes.number.isRequired, 
     initialSeconds: PropTypes.number.isRequired,
@@ -12,89 +13,139 @@ export default class Game extends Component {
   }
 
   state = {
-    selectedIds: [],
-    remainingSeconds: this.props.initialSeconds,
+    selectedIds: [], // number that player clicked
+    remainingSeconds: this.props.initialSeconds, // time left to play
   }
 
-  gameStatus = 'PLAYING'
+  gameStatus = 'PLAYING' // default game status
 
+  // from() method creates a new, shallow-copied Array instance from
+  // an array-like or iterable object
+  // map() method creates a new array with the results of calling a provided function
+  // on every element in the calling array
+  // math.floor() function returns the largest integer less than or equal to a given number
+  // math.random() returns a floating-point, pseudo-random number in the range 0-1
+
+  // randomNumberCount is a prop in Game component in App.js
   randomNumbers = Array.from({ length: this.props.randomNumberCount }).map(
     () => 1 + Math.floor(10 * Math.random())
   )
 
+  // reduce() method executes a function on each element of the array
+  // acc: accumulator, curr: currentValue
+  // generate a sum target for the game
   target = this.randomNumbers
     .slice(0, this.props.randomNumberCount - 2)
     .reduce((acc, curr) => acc + curr, 0)
 
-shuffledRandomNumbers = shuffle(this.randomNumbers)
+  // shuffle random numbers in different order in the array, not the first 4  
+  shuffledRandomNumbers = shuffle(this.randomNumbers)
 
-componentDidMount() {
+  // method runs after the component output has been rendered to the DOM
+  // we can name it timerID to understand easily
+  componentDidMount() {
     this.intervalId = setInterval(() => {
-        this.setState((prevState) => {
-            return { remainingSeconds: prevState.remainingSeconds - 1 }
+      // React recommends using a function inside of setState with (prevState, props)  
+      this.setState((prevState) => {
+            // timer count down
+            return { remainingSeconds: prevState.remainingSeconds - 1 } 
         }, () => {
             if (this.state.remainingSeconds === 0) {
-                clearInterval(this.intervalId)
+              // stop timer when reach 0 
+              clearInterval(this.intervalId) 
             }
         })
     }, 1000)
-}
+  }
 
-componentWillMount() {
+  // the method is only called one time, before the initial render
+  // a chance to handle configuration, update state, ...prepare for the first render
+  // reset a timer for a new game
+  componentWillMount() {
     clearInterval(this.intervalId)
-}
+  }
 
-isNumberSelected = (numberIndex) => {
+  // indexOf() method returns the position of the first occurrence 
+  // of a specified value in a string
+  // the method returns -1 if the vaule to search for never occurs
+  // function to check if the number has been selected or not
+  isNumberSelected = (numberIndex) => {
     return this.state.selectedIds.indexOf(numberIndex) >= 0
-}
+  }
 
-selectNumber = (numberIndex) => {
+  // a function to store selected numbers in an array
+  selectNumber = (numberIndex) => {
     this.setState((prevState) => ({
-        selectedIds: [...prevState.selectedIds, numberIndex] 
+      // spread opeartor (3 dots) expands an array into a list 
+      selectedIds: [...prevState.selectedIds, numberIndex] 
     }))
-}
+  }
 
-componentWillUpdate(nextProps, nextState) {
+  // method is called every time a re-render is required
+  // this.props or this.state is to call old props or state
+  // common use: to set a variable based on state changes, dispatching events or starting animations
+  componentWillUpdate(nextProps, nextState) {
+    // if select another number or time is up
     if (
         nextState.selectedIds !== this.state.selectedIds || nextState.remainingSeconds === 0
         ) {
         this.gameStatus = this.calcgameStatus(nextState)
+        // if not playing, stop the timer
         if (this.gameStatus !== 'PLAYING') {
             clearInterval(this.intervalId)
         }
-    }
-}
+      }
+  }
 
-calcgameStatus = (nextState) => {
+  // function to know game status
+  calcgameStatus = (nextState) => {
+    // calculate total of selected numbers
     const sumSelected = nextState.selectedIds.reduce((acc, curr) => {
         return acc + this.shuffledRandomNumbers[curr]
     }, 0)
+
+    // if time is up: lose
     if (nextState.remainingSeconds === 0) {
         return 'LOST'
     }
+    
+    // if total is inferieur target value: playing
     if (sumSelected < this.target) {
         return 'PLAYING'
     }
+    
+    // if total equals target value: win
     if (sumSelected === this.target) {
         return 'WON'
     }
+    
+    // if total superieur target value: lose
     if (sumSelected > this.target) {
         return 'LOST'
     }
-}
+  }
 
   render() {
     const gameStatus = this.gameStatus
     return (
       <View style={styles.container}>
-        <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>{this.target}</Text>
+        {/* target sum */}
+        <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>
+          {this.target}
+        </Text>
+        
+        {/* timer */}
         <Text>{this.state.remainingSeconds}</Text>
+        
+        {/* list of random numbers */}
         <View style={styles.randomContainer}>
+          
           {this.shuffledRandomNumbers.map((randomNumber, index) => (
               <RandomNumber 
                 key={index} 
                 id={index}
                 number={randomNumber} 
+                // if number has been selected or not playing, disabled number to choose
                 isDisabled={
                     this.isNumberSelected(index) || gameStatus !== 'PLAYING'
                 }
@@ -102,6 +153,8 @@ calcgameStatus = (nextState) => {
               />
           ))}
         </View>
+        
+        {/* if not playing, show the PLAY AGAIN button */}
         { this.gameStatus !== 'PLAYING' && (
             <TouchableOpacity 
                 style={styles.button} 

@@ -5,6 +5,7 @@ export default class App extends Component {
   state = {
     gameId: 1
   }
+
   resetGame = () => {
     this.setState((prevState) => {
       return { gameId: prevState.gameId + 1 }
@@ -14,10 +15,10 @@ export default class App extends Component {
   render() {
     return (
       <Game 
-        key={this.state.gameId} 
-        onPlayAgain={this.resetGame}
-        randomNumberCount={6} 
-        initialSeconds={10} 
+        key={this.state.gameId} // unique id of each game
+        onPlayAgain={this.resetGame} // reset game to play again
+        randomNumberCount={6} // quantity of numbers appear in a game to make sum
+        initialSeconds={10} // time limited to play game
       />
     )
   }

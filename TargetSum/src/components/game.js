@@ -10,11 +10,13 @@ export default class Game extends Component {
     randomNumberCount: PropTypes.number.isRequired, 
     initialSeconds: PropTypes.number.isRequired,
     onPlayAgain: PropTypes.func.isRequired,
+    score: PropTypes.number.isRequired,
   }
 
   state = {
     selectedIds: [], // number that player clicked
     remainingSeconds: this.props.initialSeconds, // time left to play
+    score: this.props.score
   }
 
   gameStatus = 'PLAYING' // game status
@@ -54,7 +56,7 @@ export default class Game extends Component {
           }, () => {
               if (this.state.remainingSeconds === 0) {
                 // stop timer when reach 0 
-                clearInterval(this.intervalId) 
+                clearInterval(this.intervalId)
               }
           })
       }
@@ -98,7 +100,7 @@ export default class Game extends Component {
     // if select another number or time is up
     if (
         nextState.selectedIds !== this.state.selectedIds || nextState.remainingSeconds === 0
-        ) {
+    ) {
         this.gameStatus = this.calcgameStatus(nextState)
         // if not playing, stop the timer
         if (this.gameStatus !== 'PLAYING') {
@@ -135,6 +137,18 @@ export default class Game extends Component {
     }
   }
 
+  calcScore = () => {
+    if (this.gameStatus === 'DEFAULT' || this.gameStatus === 'PLAYING') {
+      return this.state.score
+    }
+    if (this.gameStatus === 'WON') {
+      return this.state.score + 10
+    }
+    if (this.gameStatus === 'LOST') {
+      return this.state.score - 10
+    }
+  }
+
   render() {
     const gameStatus = this.gameStatus
     return (
@@ -159,11 +173,18 @@ export default class Game extends Component {
           </Text>
           )
         }
+
+        <View style={styles.infoContainer}>
+          {/* score */}
+          { this.gameStatus !== 'DEFAULT' && (
+          <Text style={styles.score}>Score: {this.calcScore()}</Text>
+          )}
         
-        {/* timer */}
-        { this.gameStatus !== 'DEFAULT' && (
+          {/* timer */}
+          { this.gameStatus !== 'DEFAULT' && (
           <Text style={styles.timer}>Attention: {this.state.remainingSeconds}</Text>
-        )}
+          )}
+        </View>
         
         {/* list of random numbers */}
         <View style={styles.randomContainer}>
@@ -229,7 +250,6 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   randomContainer: {
-      flex: 1,
       flexDirection: 'row',
       justifyContent: 'space-around',
       flexWrap: 'wrap'
@@ -246,9 +266,21 @@ const styles = StyleSheet.create({
   STATUS_LOST: {
     backgroundColor: "orange",
   },
+  infoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  score: {
+    fontSize: 20,
+    textAlign: 'left',
+    marginLeft: 10,
+    marginTop: 20,
+    color: '#CCEBFF'
+  },
   timer: {
     fontSize: 20,
-    textAlign: 'center',
+    textAlign: 'right',
+    marginRight: 10,
     marginTop: 20,
     color: '#CCEBFF'
   },
@@ -259,7 +291,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       marginHorizontal: 80,
-      marginVertical: 50
+      marginVertical: 20
   },
   buttonTitle: {
     color: '#fff',

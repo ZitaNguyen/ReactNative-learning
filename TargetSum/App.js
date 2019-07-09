@@ -3,8 +3,14 @@ import Game from './src/components/Game'
 
 export default class App extends Component {
   state = {
-    gameId: 1
+    gameId: 1,
   }
+
+  // startGame = () => {
+  //   this.setState((prevState) => {
+  //     return { gameId: prevState.gameId + 1, gameStatus = 'DEFAULT' }
+  //   })
+  // }
 
   resetGame = () => {
     this.setState((prevState) => {

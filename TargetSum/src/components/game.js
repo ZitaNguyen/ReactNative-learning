@@ -9,7 +9,7 @@ export default class Game extends Component {
   static propTypes = {
     randomNumberCount: PropTypes.number.isRequired, 
     initialSeconds: PropTypes.number.isRequired,
-    onPlayAgain: PropTypes.func.isRequired
+    onPlayAgain: PropTypes.func.isRequired,
   }
 
   state = {
@@ -45,16 +45,18 @@ export default class Game extends Component {
   // we can name it timerID to understand easily
   componentDidMount() {
     this.intervalId = setInterval(() => {
-      // React recommends using a function inside of setState with (prevState, props)  
-      this.setState((prevState) => {
-            // timer count down
-            return { remainingSeconds: prevState.remainingSeconds - 1 } 
-        }, () => {
-            if (this.state.remainingSeconds === 0) {
-              // stop timer when reach 0 
-              clearInterval(this.intervalId) 
-            }
-        })
+      if (this.gameStatus === 'PLAYING') {
+        // React recommends using a function inside of setState with (prevState, props)  
+        this.setState((prevState) => {
+              // timer count down
+              return { remainingSeconds: prevState.remainingSeconds - 1 } 
+          }, () => {
+              if (this.state.remainingSeconds === 0) {
+                // stop timer when reach 0 
+                clearInterval(this.intervalId) 
+              }
+          })
+      }
     }, 1000)
   }
 
@@ -62,7 +64,12 @@ export default class Game extends Component {
   // a chance to handle configuration, update state, ...prepare for the first render
   // reset a timer for a new game
   componentWillMount() {
+    this.gameStatus = 'DEFAULT',
     clearInterval(this.intervalId)
+  }
+
+  startGame = () => {
+    this.gameStatus = 'PLAYING'
   }
 
   // indexOf() method returns the position of the first occurrence 
@@ -134,8 +141,8 @@ export default class Game extends Component {
           Choose correct numbers to have a total of the target number showed in the box
         </Text>
 
-        {/* target sum */}
-        { this.gameStatus === 'PLAYING' && (
+        {/* target sum display box */}
+        { (this.gameStatus === 'DEFAULT' || this.gameStatus === 'PLAYING') && (
           <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>
             {this.target}
           </Text>
@@ -143,7 +150,7 @@ export default class Game extends Component {
         }
 
         {/* show game status message */}
-        { this.gameStatus !== 'PLAYING' && (
+        { this.gameStatus !== 'DEFAULT' && this.gameStatus !== 'PLAYING' && (
           <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>
             {this.gameStatus}
           </Text>
@@ -151,7 +158,9 @@ export default class Game extends Component {
         }
         
         {/* timer */}
-        <Text style={styles.timer}>Attention: {this.state.remainingSeconds}</Text>
+        { this.gameStatus !== 'DEFAULT' && (
+          <Text style={styles.timer}>Attention: {this.state.remainingSeconds}</Text>
+        )}
         
         {/* list of random numbers */}
         <View style={styles.randomContainer}>
@@ -169,9 +178,19 @@ export default class Game extends Component {
               />
           ))}
         </View>
+
+        {/* if not playing yet, show the START GAME button */}
+        { this.gameStatus === 'DEFAULT' && (
+            <TouchableOpacity 
+                style={styles.button} 
+                onPress={this.startGame}
+            >
+                <Text style={styles.buttonTitle}>START</Text>
+            </TouchableOpacity>
+        )}
         
         {/* if not playing, show the PLAY AGAIN button */}
-        { this.gameStatus !== 'PLAYING' && (
+        { this.gameStatus !== 'DEFAULT' && this.gameStatus !== 'PLAYING' && (
             <TouchableOpacity 
                 style={styles.button} 
                 onPress={this.props.onPlayAgain}
@@ -212,6 +231,9 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'space-around',
       flexWrap: 'wrap'
+  },
+  STATUS_DEFAULT: {
+    backgroundColor: "#01BFFF",
   },
   STATUS_PLAYING: {
     backgroundColor: "#01BFFF",

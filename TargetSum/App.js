@@ -3,7 +3,7 @@ import Game from './src/components/Game'
 
 export default class App extends Component {
   state = {
-    gameId: 1,
+    gameId: 1
   }
 
   resetGame = () => {

@@ -168,7 +168,7 @@ export default class Game extends Component {
         {/* list of random numbers */}
         <View style={styles.randomContainer}>
 
-          {this.shuffledRandomNumbers.map((randomNumber, index) => (
+          {this.gameStatus !== 'DEFAULT' && this.shuffledRandomNumbers.map((randomNumber, index) => (
               <RandomNumber 
                 key={index} 
                 id={index}

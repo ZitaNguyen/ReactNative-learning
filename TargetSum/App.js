@@ -6,12 +6,6 @@ export default class App extends Component {
     gameId: 1,
   }
 
-  // startGame = () => {
-  //   this.setState((prevState) => {
-  //     return { gameId: prevState.gameId + 1, gameStatus = 'DEFAULT' }
-  //   })
-  // }
-
   resetGame = () => {
     this.setState((prevState) => {
       return { gameId: prevState.gameId + 1 }

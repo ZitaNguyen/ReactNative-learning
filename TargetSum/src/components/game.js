@@ -17,7 +17,7 @@ export default class Game extends Component {
     remainingSeconds: this.props.initialSeconds, // time left to play
   }
 
-  gameStatus = 'PLAYING' // default game status
+  gameStatus = 'PLAYING' // game status
 
   // from() method creates a new, shallow-copied Array instance from
   // an array-like or iterable object
@@ -45,6 +45,7 @@ export default class Game extends Component {
   // we can name it timerID to understand easily
   componentDidMount() {
     this.intervalId = setInterval(() => {
+      // if is playing starts timer
       if (this.gameStatus === 'PLAYING') {
         // React recommends using a function inside of setState with (prevState, props)  
         this.setState((prevState) => {
@@ -64,10 +65,12 @@ export default class Game extends Component {
   // a chance to handle configuration, update state, ...prepare for the first render
   // reset a timer for a new game
   componentWillMount() {
+    // set status default to read instruction and appearance of button START
     this.gameStatus = 'DEFAULT',
     clearInterval(this.intervalId)
   }
 
+  // change game status when pressing on button START
   startGame = () => {
     this.gameStatus = 'PLAYING'
   }
@@ -221,7 +224,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     backgroundColor: "#01BFFF",
     padding: 10,
-    // marginTop: 0,
     marginLeft: 30,
     marginRight: 30,
     textAlign: "center"

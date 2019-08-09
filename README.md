@@ -6,3 +6,6 @@ Projects I've done to learn React Native
 
 2. **Target Sum** (modified project based on React Native course in LinkedIn Learning)
 - A game to choose numbers to have the total of a target random sum. 
+
+3. **Bake Sales** 
+- Fetch and show api, develop search function to look for specific deals

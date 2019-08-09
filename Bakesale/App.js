@@ -1,18 +1,38 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Animated, Easing, Dimensions } from 'react-native'
 import ajax from './src/ajax'
 import DealList from './src/components/DealList'
 import DealDetail from './src/components/DealDetail'
 import SearchBar from './src/components/SearchBar'
 
 export default class App extends Component {
+  // position currently, relative
+  titleXPos = new Animated.Value(0)
   state = {
     deals: [], // array for deals fetch from api
     dealsFromSearch: [], // array for deals from SearchBar
-    currentDealId: null // variable to set current deal id for DealDetail component
+    currentDealId: null, // variable to set current deal id for DealDetail component
+    activeSearchTerm: '' // to be able to keep searchTerm on SearchBar when click Back
+  }
+  // an animated function to move the word Bakesale LEFT and RIGHT 
+  animatedTitle = (direction = 1) => {
+    const width = Dimensions.get('window').width - 150 //width of screen substract width of word 
+    Animated.timing(this.titleXPos, { 
+      toValue: direction * width/2, 
+      duration: 1000, // duration 1s to ensure animation not too fast
+      easing: Easing.ease // define motion 
+    }).start(( {finished} ) => { 
+      if ( finished ) {
+        this.animatedTitle(-1 * direction) 
+      }
+    })
+    // if animation is interrupted, finished = false
+    // if previous animation finished successfully, go for new animation
+    // if not, no more animation  
   }
   // set value for array deals from fetching api for DealList component
   async componentDidMount() {
+    this.animatedTitle()
     const deals = await ajax.fetchInitialDeals()
     this.setState({ deals })
   }
@@ -22,7 +42,7 @@ export default class App extends Component {
     if (searchTerm) {
       dealsFromSearch = await ajax.fetchDealSearchResults(searchTerm)
     }
-    this.setState({ dealsFromSearch })
+    this.setState({ dealsFromSearch, activeSearchTerm: searchTerm })
   }
   // set id for current deal by clicking on a certain deal in DealList component
   setCurrentDeal = (dealId) => {
@@ -59,16 +79,19 @@ export default class App extends Component {
     if (dealsToDisplay.length > 0) {
       return (
         <View>
-          <SearchBar searchDeals={this.searchDeals} />
+          <SearchBar 
+            searchDeals={this.searchDeals} 
+            initialSearchTerm={this.state.activeSearchTerm} 
+          />
           <DealList deals={dealsToDisplay} onItemPress={this.setCurrentDeal} />
         </View>
       )
     }
-    // by default it shows Text
+    // before successfully fetch api results, it shows Text
     return (
-      <View style={styles.container}>
+      <Animated.View style={[{ left: this.titleXPos }, styles.container]}>
         <Text style={styles.header}>Bakesale</Text>
-      </View>
+      </Animated.View>
     )
   }
 }

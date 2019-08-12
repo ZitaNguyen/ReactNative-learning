@@ -11,7 +11,8 @@
     "lodash.debounce": "^4.0.8",
     "prop-types": "^15.7.2",
     "react": "16.8.6",
-    "react-native": "0.60.4"
+    "react-native": "0.60.4",
+    "universal-analytics": "^0.4.20"
   },
   "devDependencies": {
     "@babel/core": "7.5.5",

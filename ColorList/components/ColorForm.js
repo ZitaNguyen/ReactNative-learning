@@ -39,7 +39,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         backgroundColor: 'lightgrey', 
-        paddingTop: 50, 
         padding: 10
     }, 
     txtInput: {

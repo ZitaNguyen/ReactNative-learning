@@ -7,13 +7,14 @@ import { StyleSheet, Text, View, TouchableHighlight } from "react-native"
 const ColorButton = ({backgroundColor, onSelect=f=>f }) => (
   <TouchableHighlight
     style={styles.button}
-    onPress={() => onSelect(backgroundColor)}
+    onPress={() => onSelect()}
     underlayColor="orange"
   >
 
     <View style={styles.row}>
       {/* color indicator on the left of a button */}
       <View style={[styles.sample, {backgroundColor}]} />
+      {/* color name */}
       <Text style={styles.text}>{backgroundColor}</Text>
     </View>
 

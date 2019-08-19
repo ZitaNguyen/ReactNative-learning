@@ -1,12 +1,11 @@
-import React from 'react'
 import { createStackNavigator, createAppContainer } from 'react-navigation'
 
 import ColorList from './ColorList'
+import ColorInfo from './ColorInfo'
 
 const AppNavigator = createStackNavigator({
-    Home: ColorList
+    Home: {screen: ColorList},
+    Details: {screen: ColorInfo}
 })
 
-const AppContainer = createAppContainer(AppNavigator)
-
-export default AppContainer
+export default AppContainer = createAppContainer(AppNavigator)

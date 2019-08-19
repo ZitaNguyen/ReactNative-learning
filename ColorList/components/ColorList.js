@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { StyleSheet, FlatList } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 
 import ColorButton from './ColorButton'
 import ColorForm from './ColorForm'
@@ -66,6 +66,7 @@ export default class ColorList extends Component {
     }
 
     render() {
+        const { navigate } = this.props.navigation
         const { backgroundColor } = this.state
         return (
         <FlatList data = {this.state.availableColors} 
@@ -74,7 +75,8 @@ export default class ColorList extends Component {
             // redundant code, can be changed as below
             // onSelect={(color) => this.changeColor(color)} 
             //   onSelect={this.changeColor} 
-                onSelect={this.props.onColorSelected}
+                // onSelect={this.props.onColorSelected}
+                onSeclect={() => navigate('Details', {color})}
                 />
             }
             keyExtractor = {(item, index) => index.toString()}
@@ -85,13 +87,13 @@ export default class ColorList extends Component {
     }
 }
 
-ColorList.defaultProps = {
-    onColorSelected: f=>f
-}
+// ColorList.defaultProps = {
+//     onColorSelected: f=>f
+// }
 
-ColorList.propTypes = {
-    onColorSelected: PropTypes.func
-}
+// ColorList.propTypes = {
+//     onColorSelected: PropTypes.func
+// }
 
 const styles = StyleSheet.create({
   container: {
